@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose-without-neo4j.quickstart.yml convert
+    kompose.version: 1.34.0 (cbf2835db)
+  labels:
+    io.kompose.service: mysql
+  name: mysql
+spec:
+  containers:
+    - args:
+        - --character-set-server=utf8mb4
+        - --collation-server=utf8mb4_bin
+        - --default-authentication-plugin=mysql_native_password
+      env:
+        - name: MYSQL_DATABASE
+          value: datahub
+        - name: MYSQL_PASSWORD
+          value: datahub
+        - name: MYSQL_ROOT_PASSWORD
+          value: datahub
+        - name: MYSQL_USER
+          value: datahub
+      image: mysql:8.2
+      livenessProbe:
+        exec:
+          command:
+            - mysqladmin ping -h mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD
+        failureThreshold: 5
+        initialDelaySeconds: 20
+        periodSeconds: 1
+        timeoutSeconds: 5
+      name: mysql
+      ports:
+        - containerPort: 3306
+          protocol: TCP
+      volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysqldata
+  hostname: mysql
+  restartPolicy: OnFailure
+  volumes:
+    - name: mysqldata
+      persistentVolumeClaim:
+        claimName: mysqldata

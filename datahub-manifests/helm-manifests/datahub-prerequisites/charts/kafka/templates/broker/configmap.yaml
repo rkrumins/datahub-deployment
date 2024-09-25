@@ -1,0 +1,36 @@
+---
+# Source: datahub-prerequisites/charts/kafka/templates/broker/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-kafka-broker-configuration
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka
+    app.kubernetes.io/version: 3.6.1
+    helm.sh/chart: kafka-26.11.2
+    app.kubernetes.io/component: broker
+    app.kubernetes.io/part-of: kafka
+data:
+  server.properties: |-
+    # Listeners configuration
+    listeners=CLIENT://:9092,INTERNAL://:9094
+    listener.security.protocol.map=CLIENT:PLAINTEXT,INTERNAL:PLAINTEXT
+    advertised.listeners=CLIENT://advertised-address-placeholder:9092,INTERNAL://advertised-address-placeholder:9094
+    # Zookeeper configuration
+    zookeeper.connect=vault-zookeeper:2181
+    #broker.id=
+    # Kafka data logs directory
+    log.dir=/bitnami/kafka/data
+    # Kafka application logs directory
+    logs.dir=/opt/bitnami/kafka/logs
+    
+    # Interbroker configuration
+    inter.broker.listener.name=INTERNAL
+    
+    message.max.bytes=5242880
+    default.replication.factor=1
+    offsets.topic.replication.factor=1
+    transaction.state.log.replication.factor=1

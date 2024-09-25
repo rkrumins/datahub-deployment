@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose-without-neo4j.quickstart.yml convert -c
+    kompose.version: 1.34.0 (cbf2835db)
+  labels:
+    io.kompose.service: datahub-actions
+  name: datahub-actions
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: datahub-actions
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose-without-neo4j.quickstart.yml convert -c
+        kompose.version: 1.34.0 (cbf2835db)
+      labels:
+        io.kompose.service: datahub-actions
+    spec:
+      containers:
+        - env:
+            - name: ACTIONS_CONFIG
+            - name: ACTIONS_EXTRA_PACKAGES
+            - name: DATAHUB_GMS_HOST
+              value: datahub-gms
+            - name: DATAHUB_GMS_PORT
+              value: "8080"
+            - name: DATAHUB_GMS_PROTOCOL
+              value: http
+            - name: DATAHUB_SYSTEM_CLIENT_ID
+              value: __datahub_system
+            - name: DATAHUB_SYSTEM_CLIENT_SECRET
+              value: JohnSnowKnowsNothing
+            - name: KAFKA_BOOTSTRAP_SERVER
+              value: broker:29092
+            - name: KAFKA_PROPERTIES_SECURITY_PROTOCOL
+              value: PLAINTEXT
+            - name: METADATA_AUDIT_EVENT_NAME
+              value: MetadataAuditEvent_v4
+            - name: METADATA_CHANGE_LOG_VERSIONED_TOPIC_NAME
+              value: MetadataChangeLog_Versioned_v1
+            - name: SCHEMA_REGISTRY_URL
+              value: http://schema-registry:8081
+          image: acryldata/datahub-actions:head
+          name: datahub-actions
+      hostname: actions
+      restartPolicy: Always
