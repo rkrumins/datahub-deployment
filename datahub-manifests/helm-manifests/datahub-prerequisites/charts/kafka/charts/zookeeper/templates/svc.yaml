@@ -1,0 +1,32 @@
+---
+# Source: datahub-prerequisites/charts/kafka/charts/zookeeper/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-zookeeper
+  namespace: default
+  labels:
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: zookeeper
+    app.kubernetes.io/version: 3.9.1
+    helm.sh/chart: zookeeper-12.10.1
+    app.kubernetes.io/component: zookeeper
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: tcp-client
+      port: 2181
+      targetPort: client
+      nodePort: null
+    - name: tcp-follower
+      port: 2888
+      targetPort: follower
+    - name: tcp-election
+      port: 3888
+      targetPort: election
+  selector:
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/name: zookeeper
+    app.kubernetes.io/component: zookeeper

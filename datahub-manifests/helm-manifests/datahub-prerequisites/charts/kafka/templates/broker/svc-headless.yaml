@@ -1,0 +1,33 @@
+---
+# Source: datahub-prerequisites/charts/kafka/templates/broker/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-kafka-broker-headless
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka
+    app.kubernetes.io/version: 3.6.1
+    helm.sh/chart: kafka-26.11.2
+    app.kubernetes.io/component: broker
+    app.kubernetes.io/part-of: kafka
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: tcp-interbroker
+      port: 9094
+      protocol: TCP
+      targetPort: interbroker
+    - name: tcp-client
+      port: 9092
+      protocol: TCP
+      targetPort: client
+  selector:
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/name: kafka
+    app.kubernetes.io/component: broker
+    app.kubernetes.io/part-of: kafka
